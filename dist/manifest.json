@@ -22,6 +22,13 @@
 				"settings": {
 					"odataVersion": "2.0"
 				}
+			},
+			"apiRemote": {
+				"uri": "https://sua-api.com/servico-odata/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
+				}
 			}
 		}
 	},
@@ -58,6 +65,22 @@
 			},
 			"invoice": {
 				"dataSource": "invoiceRemote"
+			},
+			"models": {
+				"odataModel": {
+					"type": "sap.ui.model.odata.ODataModel",
+					"settings": {
+						"defaultBindingMode": "TwoWay",
+						"defaultCountMode": "Inline"
+					},
+					"dataSource": "apiRemote"
+				}
+			},
+			"dataSources": {
+				"apiRemote": {
+					"uri": "https://sua-api.com/dados",
+					"type": "JSON"
+				}
 			}
 		},
 		"rootView": {

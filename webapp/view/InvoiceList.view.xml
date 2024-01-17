@@ -6,10 +6,11 @@
 	<Panel accessibleRole="Region">
 		<headerToolbar>
 			<Toolbar>
-				<Title text="{i18n>invoiceListTitle}" />
+				<Title
+				text="{i18n>invoiceListTitle}" />
 				<ToolbarSpacer />
 				<SearchField
-					width="50%"
+					width="90%"
 					search=".onFilterInvoices"
 				/>
 			</Toolbar>
@@ -27,14 +28,6 @@
 			}"
 		>
 			<columns>
-				<Column
-					hAlign="End"
-					minScreenWidth="Small"
-					demandPopin="true"
-					width="5em"
-				>
-					<Text text="{i18n>columnQuantity}" />
-				</Column>
 				<Column>
 					<Text text="{i18n>columnName}" />
 				</Column>
@@ -45,13 +38,10 @@
 					<Text text="{i18n>columnStatus}" />
 				</Column>
 				<Column
-					minScreenWidth="Tablet"
+					minScreenWidth="Small"
 					demandPopin="false"
 				>
 					<Text text="{i18n>columnSupplier}" />
-				</Column>
-				<Column hAlign="End">
-					<Text text="{i18n>columnPrice}" />
 				</Column>
 			</columns>
 			<items>
