@@ -29,17 +29,20 @@
         >
             <columns>
                 <Column
+				 width="50em"
 				 minScreenWidth="Small"
 				 >
                     <Text text="{i18n>columnNome}" />
                 </Column>
                 <Column
+					width="10em"
                     minScreenWidth="Small"
                     demandPopin="true"
                 >
                     <Text text="{i18n>columnCompletado}" />
                 </Column>
                 <Column
+					width="10em"
                     minScreenWidth="Small"
                     demandPopin="false"
                 >

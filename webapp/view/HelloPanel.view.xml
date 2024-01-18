@@ -12,14 +12,8 @@
 		accessibleRole="Region"
 	>
 		<content>
-			<Button
-				id="helloDialogButton"
-				icon="sap-icon://world"
-				text="{i18n>openDialogButtonText}"
-				press=".onOpenDialog"
-				class="sapUiSmallMarginEnd sapUiVisibleOnlyOnDesktop"
-			/>
-			<Button
+			
+			<!-- <Button
 				text="{i18n>showHelloButtonText}"
 				press=".onShowHello"
 				class="myCustomButton"
@@ -32,7 +26,7 @@
 			<FormattedText
 				htmlText="Hello {/recipient/name}"
 				class="sapUiSmallMargin sapThemeHighlight-asColor myCustomText"
-			/>
+			/> -->
 		</content>
 	</Panel>
 </mvc:View>

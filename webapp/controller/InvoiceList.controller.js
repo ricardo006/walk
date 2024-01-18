@@ -31,11 +31,55 @@ sap.ui.define([
 				// Atualiza o modelo com os dados já ordenados
 				oInvoiceModel.setProperty("/", aSortedData);
 
+				if (window.localStorage) {
+					// Converte o array de objetos para uma string JSON
+					var sDataString = JSON.stringify(aSortedData);
+
+					// Salva os dados no Local Storage
+					window.localStorage.setItem("invoiceData", sDataString);
+				}
+
 				// Adiciona um log para verificar os dados após a ordenação
 				console.log("Dados ordenados pelo ID:", aSortedData);
-			});
+			}.bind(this));
 
 			this.getView().setModel(oInvoiceModel, "invoice");
+			this.restoreStatusLocally();
+		},
+
+		restoreStatusLocally: function () {
+			// Verifica se o Local Storage está disponível no navegador
+			if (window.localStorage) {
+				// Obtém os dados armazenados localmente
+				var sLocalStorageData = window.localStorage.getItem("invoiceStatus");
+
+				// Converte os dados de string JSON para objeto JavaScript
+				var oLocalStorageData = sLocalStorageData ? JSON.parse(sLocalStorageData) : {};
+
+				// Atualiza o modelo com os dados armazenados localmente
+				var oModel = this.getView().getModel("invoice");
+
+				// Obtém os dados do modelo
+				var aData = oModel.getProperty("/");
+
+				// Itera sobre as propriedades do objeto Local Storage
+				for (var sPath in oLocalStorageData) {
+					if (oLocalStorageData.hasOwnProperty(sPath)) {
+						// Encontra o item correspondente no modelo
+						var oItem = aData.find(function (item) {
+							return oModel.getCanonicalPath(oModel.createBindingContext("/" + item.id, null, { isRelative: false })) === sPath;
+						});
+
+						// Atualiza o status do item no modelo
+						if (oItem) {
+							oItem.completed = oLocalStorageData[sPath];
+						}
+					}
+				}
+
+				// Atualiza o modelo com os dados modificados
+				oModel.setProperty("/", aData);
+			}
 		},
 
 		sortDataById: function () {
@@ -85,18 +129,27 @@ sap.ui.define([
 			}
 		},
 
-		onShowDetails(oEvent) {
+		onShowDetails: function (oEvent) {
 			const oItem = oEvent.getSource();
 			const oBindingContext = oItem.getBindingContext("invoice");
 
 			if (oBindingContext) {
 				const sId = oBindingContext.getProperty("id");
 
-				// Agora você tem o ID, e pode passá-lo para a rota
+				// Obtém os dados armazenados localmente
+				const sLocalStorageData = window.localStorage.getItem("invoiceStatus");
+				const oLocalStorageData = sLocalStorageData ? JSON.parse(sLocalStorageData) : {};
+
+				// Verifica se há um status armazenado localmente para o item
+				const sPath = oBindingContext.getPath();
+				const bCompleted = oLocalStorageData[sPath] !== undefined ? oLocalStorageData[sPath] : oBindingContext.getProperty("completed");
+
+				// Agora você pode passar o status para a rota
 				const oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("detail", {
-					invoicePath: window.encodeURIComponent(oBindingContext.getPath().substr(1)),
-					invoiceId: sId
+					invoicePath: window.encodeURIComponent(sPath.substr(1)),
+					invoiceId: sId,
+					completedStatus: bCompleted
 				});
 			} else {
 				console.error("O contexto de ligação ('binding context') não está disponível.");

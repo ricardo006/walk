@@ -1,2 +1,40 @@
-sap.ui.define(["sap/ui/core/mvc/Controller","sap/ui/core/routing/History","sap/m/MessageToast","sap/ui/model/json/JSONModel"],(e,t,n,o)=>{"use strict";return e.extend("ui5.walkthrough.controller.Detail",{onInit(){const e=new o({currency:"EUR"});this.getView().setModel(e,"view");const t=this.getOwnerComponent().getRouter();t.getRoute("detail").attachPatternMatched(this.onObjectMatched,this)},onObjectMatched(e){this.byId("rating").reset();this.getView().bindElement({path:"/"+window.decodeURIComponent(e.getParameter("arguments").invoicePath),model:"invoice"})},onNavBack(){const e=t.getInstance();const n=e.getPreviousHash();if(n!==undefined){window.history.go(-1)}else{const e=this.getOwnerComponent().getRouter();e.navTo("overview",{},true)}},onRatingChange(e){const t=e.getParameter("value");const o=this.getView().getModel("i18n").getResourceBundle();n.show(o.getText("ratingConfirmation",[t]))}})});
-//# sourceMappingURL=Detail.controller.js.map
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/json/JSONModel",
+], function (Controller, JSONModel) {
+    "use strict";
+
+    return Controller.extend("ui5.walkthrough.controller.Detail", {
+        onInit: function () {
+            var oRouter = this.getOwnerComponent().getRouter();
+            oRouter.getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
+        },
+
+        _onObjectMatched: function (oEvent) {
+            var sInvoicePath = "/" + window.decodeURIComponent(oEvent.getParameter("arguments").invoicePath);
+            var sInvoiceId = oEvent.getParameter("arguments").invoiceId;
+            var bCompletedStatus = oEvent.getParameter("arguments").completedStatus;
+
+            // Agora você pode usar sInvoicePath, sInvoiceId e bCompletedStatus conforme necessário
+            // para vincular os dados corretos ao modelo da visão (invoice) ou ao contexto de ligação da visão
+            // e exibir os detalhes na página.
+
+            // Exemplo: Vincule os dados ao modelo da visão
+            var oViewModel = new JSONModel({
+                currency: "EUR"
+            });
+            this.getView().setModel(oViewModel, "view");
+
+            var oInvoiceModel = new JSONModel("https://jsonplaceholder.typicode.com/todos" + sInvoiceId);
+            this.getView().setModel(oInvoiceModel, "invoice");
+        },
+
+        onNavBack: function () {
+            this.getOwnerComponent().getRouter().navTo("master");
+        },
+
+        onRatingChange: function (oEvent) {
+            // Lógica de manipulação de alteração de classificação, se necessário
+        }
+    });
+});
