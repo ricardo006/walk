@@ -6,24 +6,28 @@ sap.ui.define([
 	return {
 
 		init() {
-			// create
+			// Crie o servidor de mock
 			const oMockServer = new MockServer({
-				rootUri: sap.ui.require.toUrl("ui5/walkthrough") + "/V2/Northwind/Northwind.svc/"
+				rootUri: "https://jsonplaceholder.typicode.com/todos"
 			});
 
-			const oUriParameters = new URLSearchParams(window.location.search);
-
-			// configure mock server with a delay
+			// Configure o servidor de mock com um atraso opcional
 			MockServer.config({
 				autoRespond: true,
-				autoRespondAfter: oUriParameters.get("serverDelay") || 500
+				autoRespondAfter: 500
 			});
 
-			// simulate
+			// Simule com base nos metadados e dados da API
 			const sPath = sap.ui.require.toUrl("ui5/walkthrough/localService");
 			oMockServer.simulate(sPath + "/metadata.xml", sPath + "/mockdata");
 
-			// start
+			// Adicione um interceptor para logar as solicitações
+			oMockServer.attachBefore("GET", (oEvent) => {
+				const sUrl = oEvent.getParameter("url");
+				console.log("Mock Server Request:", sUrl);
+			});
+
+			// Inicie o servidor de mock
 			oMockServer.start();
 		}
 	};

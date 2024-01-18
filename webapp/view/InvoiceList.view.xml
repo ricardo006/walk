@@ -1,89 +1,63 @@
 <mvc:View
-	controllerName="ui5.walkthrough.controller.InvoiceList"
-	xmlns="sap.m"
-	xmlns:mvc="sap.ui.core.mvc"
+    controllerName="ui5.walkthrough.controller.InvoiceList"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
 >
-	<Panel accessibleRole="Region">
-		<headerToolbar>
-			<Toolbar>
-				<Title
-				text="{i18n>invoiceListTitle}" />
-				<ToolbarSpacer />
-				<SearchField
-					width="90%"
-					search=".onFilterInvoices"
-				/>
-			</Toolbar>
-		</headerToolbar>
-		<Table
-			id="invoiceList"
-			class="sapUiResponsiveMargin"
-			width="auto"
-			items="{
-				path : 'invoice>/Invoices',
-				sorter : {
-					path : 'ShipperName',
-					group : true
-				}
-			}"
-		>
-			<columns>
-				<Column>
-					<Text text="{i18n>columnName}" />
-				</Column>
-				<Column
-					minScreenWidth="Small"
-					demandPopin="true"
-				>
-					<Text text="{i18n>columnStatus}" />
-				</Column>
-				<Column
-					minScreenWidth="Small"
-					demandPopin="false"
-				>
-					<Text text="{i18n>columnSupplier}" />
-				</Column>
-			</columns>
-			<items>
-				<ColumnListItem
-					type="Navigation"
-					press=".onPress"
-				>
-					<cells>
-						<ObjectNumber
-							number="{invoice>Quantity}"
-							emphasized="false"
-						/>
-						<ObjectIdentifier title="{invoice>ProductName}" />
-						<Text
-							text="{
-								parts: [
-									'invoice>Status',
-									'i18n>invoiceStatusA',
-									'i18n>invoiceStatusB',
-									'i18n>invoiceStatusC'
-								],
-								formatter: '.formatter.statusText'
-							}"
-						/>
-						<Text text="{invoice>ShipperName}" />
-						<ObjectNumber
-							number="{
-								parts: [
-									'invoice>ExtendedPrice',
-									'view>/currency'
-								],
-								type: 'sap.ui.model.type.Currency',
-								formatOptions: {
-									showMeasure: false
-								}
-							}"
-							unit="{view>/currency}"
-							state="{= ${invoice>ExtendedPrice} > 50 ? 'Error' : 'Success' }"
-						/>
-					</cells>
-				</ColumnListItem>
-			</items>
-		</Table>
-	</Panel>
+    <Panel accessibleRole="Region">
+        <headerToolbar>
+            <Toolbar>
+                <Title text="{i18n>invoiceListTitle}" />
+                <ToolbarSpacer />
+                <SearchField
+                    width="50%"
+                    search=".onFilterInvoices"
+                />
+            </Toolbar>
+        </headerToolbar>
+        <Table
+            id="invoiceList"
+            class="sapUiResponsiveMargin"
+            width="auto"
+            items="{
+                path: 'invoice>/',
+                sorter: {
+                    path: 'id',
+                    group: false
+                }
+            }"
+        >
+            <columns>
+                <Column
+				 minScreenWidth="Small"
+				 >
+                    <Text text="{i18n>columnNome}" />
+                </Column>
+                <Column
+                    minScreenWidth="Small"
+                    demandPopin="true"
+                >
+                    <Text text="{i18n>columnCompletado}" />
+                </Column>
+                <Column
+                    minScreenWidth="Small"
+                    demandPopin="false"
+                >
+                    <Text text="{i18n>columnDetalhes}" />
+                </Column>
+            </columns>
+            <items>
+                <ColumnListItem
+                    type="Navigation"
+                    press=".onPress"
+                >
+                    <cells>
+                        <Text text="{invoice>title}" />
+                        <CheckBox selected="{= ${invoice>completed} === true}" select=".onToggleCompleted" />
+                        <Button text="Detalhes" press=".onShowDetails" />
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
+    </Panel>
 </mvc:View>
