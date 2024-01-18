@@ -47,6 +47,7 @@ sap.ui.define([
 			this.restoreStatusLocally();
 		},
 
+
 		restoreStatusLocally: function () {
 			// Verifica se o Local Storage está disponível no navegador
 			if (window.localStorage) {
@@ -166,12 +167,20 @@ sap.ui.define([
 			// Altera o status em memória
 			oModel.setProperty(sPath + "/completed", !bCompleted);
 
-			// Mensagem de sucesso
-			var sStatusMessage = bCompleted ? "incompleto" : "completo";
-			console.log("Status alterado:", sStatusMessage);
+			// Salva o status localmente (usando o Local Storage)
+			this.saveStatusLocally(sPath, !bCompleted);
 
 			// Exibe mensagem de sucesso
-			MessageToast.show("Status alterado para " + sStatusMessage + " com sucesso!");
-		}
+			MessageToast.show("Status alterado com sucesso!");
+
+			// Atualiza a view para refletir as alterações
+			this.refreshView();
+		},
+
+		refreshView: function () {
+			var oModel = this.getView().getModel("invoice");
+			oModel.refresh();
+		},
+
 	});
 });
