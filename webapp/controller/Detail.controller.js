@@ -17,21 +17,18 @@ sap.ui.define([
 			oRouter.getRoute("detail").attachPatternMatched(this.onObjectMatched, this);
 		},
 
-		onObjectMatched(oEvent) {
-			this.byId("rating").reset();
-
-			const oModel = this.getView().getModel("invoice");
-			const sInvoiceId = oEvent.getParameter("arguments").invoiceId;
+		onObjectMatched: function (oEvent) {
+			var oModel = this.getView().getModel("invoiceData");
+			var sInvoiceId = oEvent.getParameter("arguments").invoiceId;
 
 			// Encontrar o objeto no modelo com base no ID
-			const aInvoices = oModel.getProperty("/");
-			const oInvoice = aInvoices.find(invoice => invoice.id === parseInt(sInvoiceId));
+			var oInvoice = oModel.getObject("/" + sInvoiceId);
 
 			// Verificar se o objeto foi encontrado
 			if (oInvoice) {
 				// Vincular o elemento encontrado
 				this.getView().bindElement({
-					path: "/" + oModel.getBindingPath(oModel.createBindingContext("/" + oInvoice.id, null, { isRelative: false })),
+					path: "/" + sInvoiceId,
 					model: "invoice"
 				});
 			} else {
