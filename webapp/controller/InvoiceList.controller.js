@@ -117,7 +117,7 @@ sap.ui.define([
 
 		onPress(oEvent) {
 			const oItem = oEvent.getSource();
-			const oBindingContext = oItem.getBindingContext("invoice");
+			const oBindingContext = oItem.getBindingContext("invoiceData");
 
 			if (oBindingContext) {
 				const sId = oBindingContext.getProperty("id");
@@ -143,11 +143,11 @@ sap.ui.define([
 				const sLocalStorageData = window.localStorage.getItem("invoiceStatus");
 				const oLocalStorageData = sLocalStorageData ? JSON.parse(sLocalStorageData) : {};
 
-				// Verifica se há um status armazenado localmente para o item
+				// Verificando se há um status localmente para o item
 				const sPath = oBindingContext.getPath();
 				const bCompleted = oLocalStorageData[sPath] !== undefined ? oLocalStorageData[sPath] : oBindingContext.getProperty("completed");
 
-				// Agora você pode passar o status para a rota
+				// Passando o status para a rota
 				const oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("detail", {
 					invoicePath: window.encodeURIComponent(sPath.substr(1)),
@@ -167,97 +167,38 @@ sap.ui.define([
 			var bCompleted = oModel.getProperty(sPath + "/completed");
 			var sId = oModel.getProperty(sPath + "/id");
 
-			console.log("Antes da alteração - ID:", sId, "Completed:", bCompleted);
-
-			// Altera o status em memória apenas para a linha correspondente
+			// Altera o status no modelo
 			oModel.setProperty(sPath + "/completed", !bCompleted);
 
-			// Itera sobre o modelo local para encontrar o objeto com o ID correspondente
-			var aData = oModel.getProperty("/");
-			for (var i = 0; i < aData.length; i++) {
-				if (aData[i].id === sId) {
-					// Log antes da alteração no objeto local
-					console.log("Elemento Antes da Alteração:", aData[i]);
+			// Atualiza o localStorage com o dado alterado
+			this.updateLocalStorage(sId, { completed: !bCompleted });
 
-					// Altera o status no objeto local
-					aData[i].completed = !bCompleted;
+			// Exibe mensagem de sucesso
+			MessageToast.show("Status do registo #" + sId + " alterado para " + (!bCompleted === true ? 'Completo!' : 'Incompleto!'));
+		},
 
-					// Log após a alteração no objeto local
-					console.log("Elemento Após a Alteração:", aData[i]);
+		updateLocalStorage: function (sId, oData) {
+			// Recupera os dados existentes do localStorage
+			var sLocalStorageData = localStorage.getItem("invoiceData");
+
+			// Converte os dados do localStorage para um objeto JavaScript
+			var oLocalStorageData = JSON.parse(sLocalStorageData);
+
+			// Itera sobre os dados existentes para encontrar o objeto com o ID correspondente
+			for (var i = 0; i < oLocalStorageData.length; i++) {
+				if (oLocalStorageData[i].id === sId) {
+					// Atualiza o status no objeto local
+					oLocalStorageData[i].completed = oData.completed;
 
 					// Atualiza o localStorage com os dados alterados
-					this.updateLocalStorage(sId, aData[i]);
+					localStorage.setItem("invoiceData", JSON.stringify(oLocalStorageData));
+
+					// Log após a alteração no objeto local
+					console.log("Elemento Após a Alteração no Local Storage:", oLocalStorageData[i]);
 
 					break;
 				}
 			}
-
-			// Atualiza o modelo com os dados modificados
-			oModel.setProperty("/", aData);
-
-			// Salva o status localmente (usando o Local Storage) apenas para a linha correspondente
-			this.saveStatusLocally(sId, !bCompleted);
-
-			console.log("Após a alteração - ID:", sId, "Novo Completed:", !bCompleted);
-
-			// Exibe mensagem de sucesso
-			MessageToast.show("Status alterado com sucesso para o ID " + sId);
 		},
-
-		updateLocalStorage: function (sId, oData) {
-			if (window.localStorage) {
-				// Obtém os dados armazenados localmente
-				var sLocalStorageData = window.localStorage.getItem("invoiceData");
-				var oLocalStorageData = sLocalStorageData ? JSON.parse(sLocalStorageData) : {};
-
-				// Atualiza o Local Storage com os dados alterados
-				oLocalStorageData[sId] = oData;
-
-				// Salva os dados no Local Storage
-				window.localStorage.setItem("invoiceData", JSON.stringify(oLocalStorageData));
-			}
-		},
-
-
-		saveStatusLocally: function (sId, bCompleted) {
-			if (window.localStorage) {
-				// Obtém os dados armazenados localmente
-				var sLocalStorageData = window.localStorage.getItem("invoiceData");
-				var oLocalStorageData = sLocalStorageData ? JSON.parse(sLocalStorageData) : {};
-
-				// Encontra o objeto no Local Storage pelo ID
-				var oOriginalData = oLocalStorageData[sId];
-
-				// Cria um novo objeto com todos os campos originais e atualiza o campo "completed"
-				var oUpdatedData = {
-					userId: oOriginalData.userId,
-					id: oOriginalData.id,
-					title: oOriginalData.title,
-					completed: bCompleted
-				};
-
-				// Atualiza o Local Storage com o novo objeto
-				oLocalStorageData[sId] = oUpdatedData;
-
-				// Salva os dados no Local Storage
-				window.localStorage.setItem("invoiceData", JSON.stringify(oLocalStorageData));
-			}
-		},
-
-		refreshView: function () {
-			var oModel = this.getView().getModel("invoiceData");
-
-			// Obtém os dados armazenados localmente
-			var sLocalStorageData = window.localStorage.getItem("invoiceData");
-			var oLocalStorageData = sLocalStorageData ? JSON.parse(sLocalStorageData) : {};
-
-			// Atualiza o modelo com os dados do Local Storage
-			oModel.setData(oLocalStorageData);
-
-			// Atualiza a view para refletir as alterações
-			oModel.refresh();
-		},
-
-
 	});
 });

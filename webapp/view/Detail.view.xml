@@ -17,7 +17,7 @@
             <attributes>
                 <ObjectAttribute
                     title="{i18n>detailCompletado}"
-                    text="{invoice>Completed}"
+                    text="{= ${invoice>Completed} ? ${i18n>yes} : ${i18n>no} }"
                 />
                 <ObjectAttribute
                     title="{i18n>detailId}"
