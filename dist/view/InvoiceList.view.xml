@@ -22,24 +22,27 @@
             items="{
                 path: 'invoice>/',
                 sorter: {
-                    path: 'title',
+                    path: 'id',
                     group: false
                 }
             }"
         >
             <columns>
                 <Column
+				 width="50em"
 				 minScreenWidth="Small"
 				 >
                     <Text text="{i18n>columnNome}" />
                 </Column>
                 <Column
+					width="10em"
                     minScreenWidth="Small"
                     demandPopin="true"
                 >
                     <Text text="{i18n>columnCompletado}" />
                 </Column>
                 <Column
+					width="10em"
                     minScreenWidth="Small"
                     demandPopin="false"
                 >
@@ -53,7 +56,7 @@
                 >
                     <cells>
                         <Text text="{invoice>title}" />
-                        <CheckBox selected="{invoice>completed}" select=".onToggleCompleted" />
+                        <CheckBox selected="{= ${invoice>completed} === true}" select=".onToggleCompleted" />
                         <Button text="Detalhes" press=".onShowDetails" />
                     </cells>
                 </ColumnListItem>

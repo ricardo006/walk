@@ -9,39 +9,38 @@ sap.ui.define([
 
 	return Controller.extend("ui5.walkthrough.controller.InvoiceList", {
 		onInit() {
-			if (window.localStorage) {
-				// Verifica se há dados armazenados localmente
-				var sLocalStorageData = window.localStorage.getItem("invoiceData");
-
-				if (sLocalStorageData) {
-					// Se existirem dados, configura o modelo com os dados do Local Storage
-					var oLocalStorageData = JSON.parse(sLocalStorageData);
-					var oInvoiceDataModel = new JSONModel(oLocalStorageData);
-					this.getView().setModel(oInvoiceDataModel, "invoiceData");
-				} else {
-					// Se não houver dados, faz a consulta à API
-					this.loadDataFromAPI();
-				}
-			}
-		},
-
-		loadDataFromAPI: function () {
-			var oInvoiceModel = new JSONModel("https://jsonplaceholder.typicode.com/todos");
+			// Assume que você tem um modelo chamado "invoice" já configurado
+			const oInvoiceModel = new JSONModel("https://jsonplaceholder.typicode.com/todos");
 
 			oInvoiceModel.attachRequestCompleted(function () {
-				var aData = oInvoiceModel.getProperty("/");
-				var aSortedData = aData.map(function (item) {
+				// Obtém os dados do modelo
+				const aData = oInvoiceModel.getProperty("/");
+
+				// Ordena os dados pelo campo "id" usando map
+				const aSortedData = aData.map(function (item) {
 					return item;
 				}).sort(function (a, b) {
 					return a.id - b.id;
 				});
 
-				// Salva os dados no Local Storage
-				window.localStorage.setItem("invoiceData", JSON.stringify(aSortedData));
+				if (window.localStorage) {
+					// Converte o array de objetos para uma string JSON
+					var sDataString = JSON.stringify(aSortedData);
 
-				// Configura o modelo "invoiceData" com os dados da API
-				var oInvoiceDataModel = new JSONModel(aSortedData);
-				this.getView().setModel(oInvoiceDataModel, "invoiceData");
+					// Salva os dados no Local Storage
+					window.localStorage.setItem("invoiceData", sDataString);
+
+					// Restaura os dados localmente
+					this.restoreStatusLocally();
+
+					// Obtém os dados armazenados localmente
+					var sLocalStorageData = window.localStorage.getItem("invoiceData");
+					var oLocalStorageData = sLocalStorageData ? JSON.parse(sLocalStorageData) : {};
+
+					// Configura o modelo "invoiceData" com os dados do Local Storage
+					var oInvoiceDataModel = new JSONModel(oLocalStorageData);
+					this.getView().setModel(oInvoiceDataModel, "invoice");
+				}
 
 				// Adiciona um log para verificar os dados após a ordenação
 				console.log("Dados ordenados pelo ID:", aSortedData);
@@ -134,7 +133,7 @@ sap.ui.define([
 
 		onShowDetails: function (oEvent) {
 			const oItem = oEvent.getSource();
-			const oBindingContext = oItem.getBindingContext("invoiceData");
+			const oBindingContext = oItem.getBindingContext("invoice");
 
 			if (oBindingContext) {
 				const sId = oBindingContext.getProperty("id");
@@ -162,102 +161,27 @@ sap.ui.define([
 		onToggleCompleted: function (oEvent) {
 			var oCheckBox = oEvent.getSource();
 			var oModel = this.getView().getModel("invoiceData");
-			var oContext = oCheckBox.getBindingContext("invoiceData");
+			var oContext = oCheckBox.getBindingContext("invoice");
 			var sPath = oContext.getPath();
 			var bCompleted = oModel.getProperty(sPath + "/completed");
-			var sId = oModel.getProperty(sPath + "/id");
 
-			console.log("Antes da alteração - ID:", sId, "Completed:", bCompleted);
-
-			// Altera o status em memória apenas para a linha correspondente
+			// Altera o status em memória
 			oModel.setProperty(sPath + "/completed", !bCompleted);
 
-			// Itera sobre o modelo local para encontrar o objeto com o ID correspondente
-			var aData = oModel.getProperty("/");
-			for (var i = 0; i < aData.length; i++) {
-				if (aData[i].id === sId) {
-					// Log antes da alteração no objeto local
-					console.log("Elemento Antes da Alteração:", aData[i]);
-
-					// Altera o status no objeto local
-					aData[i].completed = !bCompleted;
-
-					// Log após a alteração no objeto local
-					console.log("Elemento Após a Alteração:", aData[i]);
-
-					// Atualiza o localStorage com os dados alterados
-					this.updateLocalStorage(sId, aData[i]);
-
-					break;
-				}
-			}
-
-			// Atualiza o modelo com os dados modificados
-			oModel.setProperty("/", aData);
-
-			// Salva o status localmente (usando o Local Storage) apenas para a linha correspondente
-			this.saveStatusLocally(sId, !bCompleted);
-
-			console.log("Após a alteração - ID:", sId, "Novo Completed:", !bCompleted);
+			// Salva o status localmente (usando o Local Storage)
+			this.saveStatusLocally(sPath, !bCompleted);
 
 			// Exibe mensagem de sucesso
-			MessageToast.show("Status alterado com sucesso para o ID " + sId);
-		},
+			MessageToast.show("Status alterado com sucesso!");
 
-		updateLocalStorage: function (sId, oData) {
-			if (window.localStorage) {
-				// Obtém os dados armazenados localmente
-				var sLocalStorageData = window.localStorage.getItem("invoiceData");
-				var oLocalStorageData = sLocalStorageData ? JSON.parse(sLocalStorageData) : {};
-
-				// Atualiza o Local Storage com os dados alterados
-				oLocalStorageData[sId] = oData;
-
-				// Salva os dados no Local Storage
-				window.localStorage.setItem("invoiceData", JSON.stringify(oLocalStorageData));
-			}
-		},
-
-
-		saveStatusLocally: function (sId, bCompleted) {
-			if (window.localStorage) {
-				// Obtém os dados armazenados localmente
-				var sLocalStorageData = window.localStorage.getItem("invoiceData");
-				var oLocalStorageData = sLocalStorageData ? JSON.parse(sLocalStorageData) : {};
-
-				// Encontra o objeto no Local Storage pelo ID
-				var oOriginalData = oLocalStorageData[sId];
-
-				// Cria um novo objeto com todos os campos originais e atualiza o campo "completed"
-				var oUpdatedData = {
-					userId: oOriginalData.userId,
-					id: oOriginalData.id,
-					title: oOriginalData.title,
-					completed: bCompleted
-				};
-
-				// Atualiza o Local Storage com o novo objeto
-				oLocalStorageData[sId] = oUpdatedData;
-
-				// Salva os dados no Local Storage
-				window.localStorage.setItem("invoiceData", JSON.stringify(oLocalStorageData));
-			}
+			// Atualiza a view para refletir as alterações
+			this.refreshView();
 		},
 
 		refreshView: function () {
-			var oModel = this.getView().getModel("invoiceData");
-
-			// Obtém os dados armazenados localmente
-			var sLocalStorageData = window.localStorage.getItem("invoiceData");
-			var oLocalStorageData = sLocalStorageData ? JSON.parse(sLocalStorageData) : {};
-
-			// Atualiza o modelo com os dados do Local Storage
-			oModel.setData(oLocalStorageData);
-
-			// Atualiza a view para refletir as alterações
+			var oModel = this.getView().getModel("invoice");
 			oModel.refresh();
 		},
-
 
 	});
 });

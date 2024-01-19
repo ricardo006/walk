@@ -20,7 +20,7 @@
             class="sapUiResponsiveMargin"
             width="auto"
             items="{
-                path: 'invoice>/',
+                path: 'invoiceData>/',
                 sorter: {
                     path: 'id',
                     group: false
@@ -55,8 +55,8 @@
                     press=".onPress"
                 >
                     <cells>
-                        <Text text="{invoice>title}" />
-                        <CheckBox selected="{= ${invoice>completed} === true}" select=".onToggleCompleted" />
+                        <Text text="{invoiceData>title}" />
+                        <CheckBox selected="{= ${invoiceData>completed} === true}" select=".onToggleCompleted" />
                         <Button text="Detalhes" press=".onShowDetails" />
                     </cells>
                 </ColumnListItem>
