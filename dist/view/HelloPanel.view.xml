@@ -1,0 +1,20 @@
+<mvc:View
+	 controllerName="ui5.walkthrough.controller.InvoiceList"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+>
+	<Panel
+		class="sapUiResponsiveMargin"
+		width="auto"
+		expandable="{device>/system/phone}"
+		expanded="{= !${device>/system/phone} }"
+		accessibleRole="Region"
+	>
+		<Image
+			src="../images/logo-brgaap.png"
+			width="400px" 
+			height="auto" 
+		/>
+	</Panel>
+</mvc:View>
