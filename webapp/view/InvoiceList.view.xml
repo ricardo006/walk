@@ -5,13 +5,15 @@
     xmlns:core="sap.ui.core"
 >
     <Panel accessibleRole="Region">
-        <headerToolbar>
-            <Toolbar>
-                <Title text="{i18n>invoiceListTitle}" />
-                <ToolbarSpacer />
-                <SearchField width="50%" search=".onFilterInvoices" />
-            </Toolbar>
-        </headerToolbar>
+        <SearchField width="100%" search=".onFilterInvoices" />
+
+        <content>
+            <Image
+                src="../images/logo-brgaap.png"
+                width="400px"
+                height="auto"
+            />
+        </content>
 
         <!-- Páginação da tabela com rolagem -->
         <Table

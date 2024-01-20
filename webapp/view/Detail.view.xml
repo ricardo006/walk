@@ -23,7 +23,6 @@
                     title="{i18n>detailId}"
                     text="{invoice>/id}"
                 />
-                <!-- Adicione mais atributos conforme necessário -->
                 <ObjectAttribute
                     title="{i18n>detailUserId}"
                     text="{invoice>/userId}"

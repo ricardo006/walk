@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
-], function (Controller, MessageToast, JSONModel, Filter, FilterOperator) {
+	"sap/ui/model/FilterOperator",
+	"sap/ui/core/Fragment"
+], function (Controller, MessageToast, JSONModel, Filter, FilterOperator, Fragment) {
 	"use strict";
 
 	return Controller.extend("ui5.walkthrough.controller.InvoiceList", {
@@ -79,7 +80,6 @@ sap.ui.define([
 				console.error("Erro ao carregar dados da API:", error);
 			});
 		},
-
 
 		restoreStatusLocally: function () {
 			// Verifica se o Local Storage está disponível no navegador

@@ -75,12 +75,6 @@
 					},
 					"dataSource": "apiRemote"
 				}
-			},
-			"dataSources": {
-				"apiRemote": {
-					"uri": "https://sua-api.com/dados",
-					"type": "JSON"
-				}
 			}
 		},
 		"rootView": {
