@@ -140,7 +140,7 @@ sap.ui.define([
 				const sId = oBindingContext.getProperty("id");
 
 				// Obtém os dados armazenados localmente
-				const sLocalStorageData = window.localStorage.getItem("invoiceStatus");
+				const sLocalStorageData = window.localStorage.getItem("invoiceData");
 				const oLocalStorageData = sLocalStorageData ? JSON.parse(sLocalStorageData) : {};
 
 				// Verificando se há um status localmente para o item
@@ -173,7 +173,7 @@ sap.ui.define([
 			// Atualiza o localStorage com o dado alterado
 			this.updateLocalStorage(sId, { completed: !bCompleted });
 
-			// Exibe mensagem de sucesso
+			// Exibe a mensagem de sucesso
 			MessageToast.show("Status do registo #" + sId + " alterado para " + (!bCompleted === true ? 'Completo!' : 'Incompleto!'));
 		},
 

@@ -1,2 +1,0 @@
-sap.ui.define(["sap/ui/core/util/MockServer"],e=>{"use strict";return{init(){const t=new e({rootUri:"https://jsonplaceholder.typicode.com/todos"});e.config({autoRespond:true,autoRespondAfter:500});const o=sap.ui.require.toUrl("ui5/walkthrough/localService");t.simulate(o+"/metadata.xml",o+"/mockdata");t.attachBefore("GET",e=>{const t=e.getParameter("url");console.log("Mock Server Request:",t)});t.start()}}});
-//# sourceMappingURL=mockserver.js.map

@@ -8,31 +8,43 @@ sap.ui.define([
 
 	return Controller.extend("ui5.walkthrough.controller.Detail", {
 		onInit() {
-			const oViewModel = new JSONModel({
-				currency: "EUR"
-			});
-			this.getView().setModel(oViewModel, "view");
+			// Criação de um modelo JSON vazio e define na visão com o nome "invoice"
+			var oInvoiceModel = new JSONModel();
+			this.getView().setModel(oInvoiceModel, "invoice");
 
-			const oRouter = this.getOwnerComponent().getRouter();
+			// Obtém a instância do roteador e anexa o manipulador ao evento "patternMatched"
+			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.getRoute("detail").attachPatternMatched(this.onObjectMatched, this);
 		},
 
 		onObjectMatched: function (oEvent) {
-			var oModel = this.getView().getModel("invoiceData");
+			// Obtém o ID da fatura da rota
 			var sInvoiceId = oEvent.getParameter("arguments").invoiceId;
 
-			// Encontrar o objeto no modelo com base no ID
-			var oInvoice = oModel.getObject("/" + sInvoiceId);
+			// Obtém os dados armazenados localmente
+			var sLocalStorageData = window.localStorage.getItem("invoiceData");
+			var oLocalStorageData = sLocalStorageData ? JSON.parse(sLocalStorageData) : {};
 
-			// Verificar se o objeto foi encontrado
+			// Busca o objeto correspondente ao ID no Local Storage usando map
+			var aKeys = Object.keys(oLocalStorageData);
+			var oInvoice = aKeys.map(function (key) {
+				return oLocalStorageData[key];
+			}).find(function (invoice) {
+				return invoice.id === parseInt(sInvoiceId);
+			});
+
+			// Verifica se o objeto com o ID esperado está presente no Local Storage
 			if (oInvoice) {
-				// Vincular o elemento encontrado
-				this.getView().bindElement({
-					path: "/" + sInvoiceId,
-					model: "invoice"
-				});
+				// Define os dados do objeto no modelo "invoice"
+				this.getView().getModel("invoice").setData(oInvoice);
+
+				// Adiciona logs para verificar os dados
+				console.log("ID esperado:", sInvoiceId);
+				console.log("Chaves reais no Local Storage:", Object.keys(oLocalStorageData));
+				console.log("Dados do objeto no Local Storage:", oInvoice);
+				console.log("Dados do modelo 'invoice':", this.getView().getModel("invoice").getData());
 			} else {
-				// Se o objeto não foi encontrado, você pode lidar com isso, talvez exibindo uma mensagem ou navegando de volta para a visão geral
+				// Se o objeto não foi encontrado, exibe uma mensagem ou navega de volta para a visão geral
 				MessageToast.show("Detalhes não encontrados para o ID: " + sInvoiceId);
 				this.onNavBack();
 			}
