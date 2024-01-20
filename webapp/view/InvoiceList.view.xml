@@ -7,57 +7,44 @@
     <Panel accessibleRole="Region">
         <headerToolbar>
             <Toolbar>
-                
                 <Title text="{i18n>invoiceListTitle}" />
                 <ToolbarSpacer />
-                <SearchField
-                    width="50%"
-                    search=".onFilterInvoices"
-                />
+                <SearchField width="50%" search=".onFilterInvoices" />
             </Toolbar>
         </headerToolbar>
+
+        <!-- Páginação da tabela com rolagem -->
         <Table
             id="invoiceList"
-            width="auto"
+            growing="true"
+            growingScrollToLoad="true"
             items="{
                 path: 'invoiceData>/',
                 sorter: {
                     path: 'id',
                     group: false
-                }
+                },
+                templateShareable: false
             }"
+            updateFinished=".onListUpdateFinished"
         >
             <columns>
-                <Column
-				 width="50em"
-				 minScreenWidth="Small"
-				 >
+                <Column width="60em">
                     <Text text="{i18n>columnNome}" />
                 </Column>
-                <Column
-					width="10em"
-                    minScreenWidth="Small"
-                    demandPopin="true"
-                >
+                <Column width="10em">
                     <Text text="{i18n>columnCompletado}" />
                 </Column>
-                <Column
-					width="10em"
-                    minScreenWidth="Small"
-                    demandPopin="false"
-                >
+                <Column width="10em">
                     <Text text="{i18n>columnDetalhes}" />
                 </Column>
             </columns>
             <items>
-                <ColumnListItem
-                    type="Navigation"
-                    press=".onPress"
-                >
+                <ColumnListItem type="Navigation" press=".onPress">
                     <cells>
                         <Text text="{invoiceData>title}" />
                         <CheckBox selected="{= ${invoiceData>completed} === true}" select=".onToggleCompleted" />
-                        <Button text="Detalhes" press=".onShowDetails" />
+                        <Button text="{i18n>columnDetalhes}" press=".onShowDetails" />
                     </cells>
                 </ColumnListItem>
             </items>

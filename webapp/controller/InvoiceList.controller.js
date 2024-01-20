@@ -26,13 +26,42 @@ sap.ui.define([
 		},
 
 		loadDataFromAPI: function () {
-			var oInvoiceModel = new JSONModel("https://jsonplaceholder.typicode.com/todos");
+			// URL da API
+			var apiURL = "https://jsonplaceholder.typicode.com/todos";
 
-			oInvoiceModel.attachRequestCompleted(function () {
-				var aData = oInvoiceModel.getProperty("/");
-				var aSortedData = aData.map(function (item) {
-					return item;
-				}).sort(function (a, b) {
+			// Função para fazer uma solicitação recursiva para obter todos os registros paginados
+			var fetchAllData = function (url, allData) {
+				return new Promise(function (resolve, reject) {
+					var oInvoiceModel = new JSONModel(url);
+
+					oInvoiceModel.attachRequestCompleted(function () {
+						var newData = oInvoiceModel.getProperty("/");
+
+						// Concatena os novos dados aos dados existentes
+						allData = allData.concat(newData);
+
+						// Verifica se há mais páginas (registros)
+						var nextPage = oInvoiceModel.getProperty("/_meta/nextLink");
+						if (nextPage) {
+							// Se houver mais páginas, faz uma nova solicitação recursiva
+							fetchAllData(nextPage, allData).then(resolve).catch(reject);
+						} else {
+							// Se não houver mais páginas, resolve a promessa com todos os dados
+							resolve(allData);
+						}
+					});
+
+					// Rejeita a promessa se houver um erro na solicitação
+					oInvoiceModel.attachRequestFailed(function (oError) {
+						reject(oError);
+					});
+				});
+			};
+
+			// Inicia a solicitação inicial
+			fetchAllData(apiURL, []).then(function (allData) {
+				// Ordena os dados pelo ID
+				var aSortedData = allData.sort(function (a, b) {
 					return a.id - b.id;
 				});
 
@@ -45,8 +74,12 @@ sap.ui.define([
 
 				// Adiciona um log para verificar os dados após a ordenação
 				console.log("Dados ordenados pelo ID:", aSortedData);
-			}.bind(this));
+			}.bind(this)).catch(function (error) {
+				// Lidar com erros, como exibir uma mensagem de erro
+				console.error("Erro ao carregar dados da API:", error);
+			});
 		},
+
 
 		restoreStatusLocally: function () {
 			// Verifica se o Local Storage está disponível no navegador

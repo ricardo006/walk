@@ -25,6 +25,20 @@ sap.ui.define([
 			oMockServer.attachBefore("GET", (oEvent) => {
 				const sUrl = oEvent.getParameter("url");
 				console.log("Mock Server Request:", sUrl);
+
+				// Intercepte solicitações GET e forneça a lista completa de registros
+				if (sUrl.indexOf("$filter") === -1) {
+					const oResponse = {
+						status: 200,
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							value: oMockServer.getEntitySetData("YourEntitySetName")
+						})
+					};
+					oEvent.getParameter("requestHandle").respond(oResponse);
+				}
 			});
 
 			// Inicie o servidor de mock
