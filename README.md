@@ -2,7 +2,10 @@
 
 Bem-vindo ao Meu Projeto SAPUI5! Este projeto é baseado no framework SAPUI5 e é destinado a Ricardo Oliveira para avaliação para vaga de Desenvolvedor Front End na BR GAAP.
 
+### Página Inicial
 ![Página Inicial](./webapp/images/tela-inicial.png)
+
+### Página Detalhes
 ![Página de Detalhes](./webapp/images/details.png)
 
 ## Pré-requisitos
