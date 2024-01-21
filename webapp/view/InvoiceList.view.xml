@@ -5,7 +5,7 @@
     xmlns:core="sap.ui.core"
 >
     <Panel accessibleRole="Region">
-        <SearchField width="100%" search=".onFilterInvoices" />
+        <SearchField width="100%" search=".onFilterInvoices" class="customSearchField"/>
 
         <content>
             <Image
@@ -46,7 +46,7 @@
                     <cells>
                         <Text text="{invoiceData>title}" />
                         <CheckBox selected="{= ${invoiceData>completed} === true}" select=".onToggleCompleted" />
-                        <Button text="{i18n>columnDetalhes}" press=".onShowDetails" />
+                        <Button text="{i18n>columnDetalhes}" press=".onShowDetails" class="greenButton"/>
                     </cells>
                 </ColumnListItem>
             </items>

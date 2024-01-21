@@ -11,11 +11,10 @@ html[dir="rtl"] .myAppDemoWT .myCustomButton.sapMBtn {
 	font-weight: bold;
 }
 
-/*	ProductRating */
-.myAppDemoWTProductRating {
-	padding: 0.75rem;
-}
-
 .myAppDemoWTProductRating .sapMRI {
 	vertical-align: initial;
+}
+
+input {
+	height: 160px;
 }
