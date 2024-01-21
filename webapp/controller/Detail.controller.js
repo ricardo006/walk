@@ -50,6 +50,7 @@ sap.ui.define([
 			}
 		},
 
+		//Voltar tela
 		onNavBack() {
 			const oHistory = History.getInstance();
 			const sPreviousHash = oHistory.getPreviousHash();
@@ -60,13 +61,6 @@ sap.ui.define([
 				const oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("overview", {}, true);
 			}
-		},
-
-		onRatingChange(oEvent) {
-			const fValue = oEvent.getParameter("value");
-			const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
-
-			MessageToast.show(oResourceBundle.getText("ratingConfirmation", [fValue]));
 		}
 	});
 });
